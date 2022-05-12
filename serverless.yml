@@ -7,7 +7,7 @@ provider:
   name: aws
   runtime: nodejs12.x
   environment:
-    DYNAMODB_TABLE: ${self:service}-${sls:stage}
+    DYNAMODB_TABLE: "params-${sls:stage}"
   httpApi:
     cors: true
   iam:
@@ -24,6 +24,13 @@ provider:
           Resource: "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
 
 functions:
+  promoteddb:
+    handler: promoteddb.run
+    events:
+      - httpApi:
+          path: /promoteddb/{sourceStage}/{destStage}
+          method: get
+
   create:
     handler: todos/create.create
     events:
@@ -66,11 +73,11 @@ resources:
       Properties:
         AttributeDefinitions:
           -
-            AttributeName: id
+            AttributeName: parameter_set
             AttributeType: S
         KeySchema:
           -
-            AttributeName: id
+            AttributeName: parameter_set
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.DYNAMODB_TABLE}

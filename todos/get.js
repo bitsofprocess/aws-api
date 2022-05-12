@@ -8,7 +8,7 @@ module.exports.get = (event, context, callback) => {
   const params = {
     TableName: process.env.DYNAMODB_TABLE,
     Key: {
-      id: event.pathParameters.id,
+      parameter_set: event.pathParameters.id,
     },
   };
 
@@ -28,7 +28,7 @@ module.exports.get = (event, context, callback) => {
     // create a response
     const response = {
       statusCode: 200,
-      body: JSON.stringify(result.Item),
+      body: JSON.stringify(result.Item.app),
     };
     callback(null, response);
   });
