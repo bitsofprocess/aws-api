@@ -70,6 +70,13 @@ module.exports.run = (event, context, callback) => {
 
                 console.log(sourceItem);
                 console.log(destItem);
+
+                const newItem = {
+                    ...sourceItem, 
+                    game_api_key: destItem.game_api_key
+                  };
+                
+                console.log(newItem);
             })
     })
 
