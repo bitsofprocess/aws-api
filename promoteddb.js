@@ -70,16 +70,25 @@ module.exports.run = (event, context, callback) => {
 
                 console.log(sourceItem);
                 console.log(destItem);
+                
+
+                // updateddb function to be added here 
 
                 const newItem = {
                     ...sourceItem, 
                     game_api_key: destItem.game_api_key
                   };
+
+                // console log current destItem to keep record
                 
+                //add logic to replace excludeKeys (iterate through excludeKeys array and overwrite sourceItem keys)
                 console.log(newItem);
             })
-    })
 
+            // delete destItem
+            // create function
+    })
+                
     //     dynamoDb.get(destparams, (error, result) => {
     //         // handle potential errors
     //         if (error) {
