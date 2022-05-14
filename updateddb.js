@@ -19,7 +19,7 @@ const updateddb = (sourceItem, destItem) => {
 
   const newItem = {
     ...sourceItem, 
-    game_api_key: "PLEASE WORK"
+    game_api_key: destItem.game_api_key
   };
 
   // write the todo to the database
@@ -41,6 +41,7 @@ const updateddb = (sourceItem, destItem) => {
       body: JSON.stringify(newItem),
     };
     callback(null, response);
+    console.log(newItem);
   });
 
 

@@ -1,11 +1,14 @@
 'use strict';
 
 const AWS = require('aws-sdk'); // eslint-disable-line import/no-extraneous-dependencies
+const updateddb = require('./updateddb');
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 
 const getddb = (sourceParams, destParams) => {
+    let sourceItem 
+    let destItem 
 
     dynamoDb.get(sourceParams, (error, result) => {
     // handle potential errors
@@ -26,8 +29,7 @@ const getddb = (sourceParams, destParams) => {
         };
         // callback(null, response);
 
-        const sourceItem = result.Item;
-        console.log(sourceItem);
+        sourceItem = result.Item;
     });
 
     dynamoDb.get(destParams, (error, result) => {
@@ -49,9 +51,12 @@ const getddb = (sourceParams, destParams) => {
             };
             // callback(null, response);
     
-            const destItem = result.Item;
-            console.log(destItem);
+            destItem = result.Item;
         });
+    
+    console.log(sourceItem);
+    console.log(destItem);
+    updateddb(sourceItem, destItem);
 }
 
 module.exports = getddb;

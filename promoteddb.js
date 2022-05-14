@@ -1,10 +1,9 @@
 'use strict';
 
 const AWS = require('aws-sdk'); // eslint-disable-line import/no-extraneous-dependencies
-const getddb = require('./getddb');
-const updateddb = require('./updateddb');
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
+
 module.exports.run = (event, context, callback) => {
     const sourceStage = event.pathParameters.sourceStage;
     const destStage = event.pathParameters.destStage;
@@ -13,8 +12,6 @@ module.exports.run = (event, context, callback) => {
         "game_api_key",
         "min_version"
     ];
-    console.log(sourceStage);
-    console.log(destStage);
     const sourceParams = {
         TableName: `params-${sourceStage}`,
         Key: {
@@ -28,29 +25,53 @@ module.exports.run = (event, context, callback) => {
     }
       };
     
-    getddb(sourceParams, destParams);
+    
+    // getddb(sourceParams, destParams);
 
-    updateddb(sourceItem, destItem);
-//   fetch all todos from the database
-    // dynamoDb.get(sourceparams, (error, result) => {
-    // // handle potential errors
-    //     if (error) {
-    //     console.error(error);
-    //     callback(null, {
-    //         statusCode: error.statusCode || 501,
-    //         headers: { 'Content-Type': 'text/plain' },
-    //         body: 'Couldn\'t fetch the item.',
-    //     });
-    //     return;
-    //     }
+    dynamoDb.get(sourceParams, (error, result) => {
+    // handle potential errors
+        if (error) {
+        console.error(error);
+        callback(null, {
+            statusCode: error.statusCode || 501,
+            headers: { 'Content-Type': 'text/plain' },
+            body: 'Couldn\'t fetch sourceParams.',
+        });
+        return;
+        }
 
-    //     // create a response
-    //     const response = {
-    //     statusCode: 200,
-    //     body: JSON.stringify(result.Item.app),
-    //     };
-    //     // callback(null, response);
-    //     const sourceItem = result.Item;
+        // create a response
+        const response = {
+        statusCode: 200,
+        body: JSON.stringify(result.Item),
+        };
+        // callback(null, response);
+        const sourceItem = result.Item;
+
+        dynamoDb.get(destParams, (error, result) => {
+            // handle potential errors
+                if (error) {
+                console.error(error);
+                callback(null, {
+                    statusCode: error.statusCode || 501,
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: 'Couldn\'t fetch destParams.',
+                });
+                return;
+                }
+        
+                // create a response
+                const response = {
+                statusCode: 200,
+                body: JSON.stringify(result.Item),
+                };
+                // callback(null, response);
+                const destItem = result.Item;
+
+                console.log(sourceItem);
+                console.log(destItem);
+            })
+    })
 
     //     dynamoDb.get(destparams, (error, result) => {
     //         // handle potential errors
@@ -86,4 +107,4 @@ module.exports.run = (event, context, callback) => {
     //     });
     //         return newItem;
     // });
-};
+    };
