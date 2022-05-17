@@ -16,103 +16,107 @@ module.exports.run = (event, context, callback) => {
         "game_api",
         "parameters_api_key"
     ];
-    const sourceParams = {
-        TableName: `params-${sourceStage}`,
-        Key: {
-            parameter_set: item
-        }
-      };
-    const destParams = {
-    TableName: `params-${destStage}`,
-    Key: {
-        parameter_set: item
-    }
-      };
+    // const {sourceItem,destItem} = await getddb(params);
+    // const sourceParams = {
+    //     TableName: `params-${sourceStage}`,
+    //     Key: {
+    //         parameter_set: item
+    //     }
+    //   };
+    // const destParams = {
+    // TableName: `params-${destStage}`,
+    // Key: {
+    //     parameter_set: item
+    // }
+    //   };
     
-    // GET SOURCE AND PROD FILES
+    // // GET SOURCE AND PROD FILES
 
-    dynamoDb.get(sourceParams, (error, result) => {
+    // dynamoDb.get(sourceParams, (error, result) => {
   
-        if (error) {
-        console.error(error);
-        callback(null, {
-            statusCode: error.statusCode || 501,
-            headers: { 'Content-Type': 'text/plain' },
-            body: 'Couldn\'t fetch sourceParams.',
-        });
-        return;
-        }
+    //     if (error) {
+    //     console.error(error);
+    //     callback(null, {
+    //         statusCode: error.statusCode || 501,
+    //         headers: { 'Content-Type': 'text/plain' },
+    //         body: 'Couldn\'t fetch sourceParams.',
+    //     });
+    //     return;
+    //     }
 
-        const response = {
-        statusCode: 200,
-        body: JSON.stringify(result.Item),
-        };
-        callback(null, response);
-        const sourceItem = result.Item;
+    //     const response = {
+    //     statusCode: 200,
+    //     body: JSON.stringify(result.Item),
+    //     };
+    //     callback(null, response);
+    //     const sourceItem = result.Item;
 
-        dynamoDb.get(destParams, (error, result) => {
-                if (error) {
-                console.error(error);
-                callback(null, {
-                    statusCode: error.statusCode || 501,
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: 'Couldn\'t fetch destParams.',
-                });
-                return;
-                }
+    //     dynamoDb.get(destParams, (error, result) => {
+    //             if (error) {
+    //             console.error(error);
+    //             callback(null, {
+    //                 statusCode: error.statusCode || 501,
+    //                 headers: { 'Content-Type': 'text/plain' },
+    //                 body: 'Couldn\'t fetch destParams.',
+    //             });
+    //             return;
+    //             }
         
-                const response = {
-                statusCode: 200,
-                body: JSON.stringify(result.Item),
-                };
-                callback(null, response);
-                const destItem = result.Item;
+    //             const response = {
+    //             statusCode: 200,
+    //             body: JSON.stringify(result.Item),
+    //             };
+    //             callback(null, response);
+    //             const destItem = result.Item;
 
-                // CREATE NEW PROD FILE
+    //             // CREATE NEW PROD FILE
 
-                let newItem = {
-                    ...sourceItem
-                }
+    //             let newItem = {
+    //                 ...sourceItem
+    //             }
 
-                for (let [key, value] of Object.entries(newItem)) {
-                    for (let i = 0; i < excludeKeys.length; i++) {
-                        if (key === excludeKeys[i]) {
-                        newItem[excludeKeys[i]] = destItem[excludeKeys[i]];
-                        }
-                    } 
-                  }
+    //             for (let [key, value] of Object.entries(newItem)) {
+    //                 for (let i = 0; i < excludeKeys.length; i++) {
+    //                     if (key === excludeKeys[i]) {
+    //                     newItem[excludeKeys[i]] = destItem[excludeKeys[i]];
+    //                     }
+    //                 } 
+    //               }
 
 
-                console.log(newItem)
+    //             console.log(newItem)
                 
-                // DELETE OLD FILE
-                const deleteOldProd = (event, context, callback) => {
-                    const params = {
-                      TableName: process.env.DYNAMODB_TABLE,
-                      Key: {
-                        id: event.pathParameters.destStage,
-                      },
-                    };
-                  
-                    dynamoDb.delete(params, (error) => {
-                      if (error) {
-                        console.error(error);
-                        callback(null, {
-                          statusCode: error.statusCode || 501,
-                          headers: { 'Content-Type': 'text/plain' },
-                          body: 'Couldn\'t remove the todo item.',
-                        });
-                        return;
-                      }
-                  
-                      const response = {
-                        statusCode: 200,
-                        body: JSON.stringify({}),
-                      };
-                      callback(null, response);
-                    });
-                }
+            // DELETE OLD FILE
+        
+        // const deleteOldProd = () => {
 
+            const params = {
+                TableName: `params-${destStage}`,
+                Key: {
+                parameter_set: item
+                },
+            };
+            
+                dynamoDb.delete(params, (error) => {
+                    if (error) {
+                    console.error(error);
+                    callback(null, {
+                        statusCode: error.statusCode || 501,
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: 'Couldn\'t delete item.',
+                    });
+                    return;
+                    }
+                
+                    const response = {
+                    statusCode: 200,
+                    body: JSON.stringify({}),
+                    };
+                    callback(null, response);
+                    console.log(response);
+                });
+        // }
+        
                 // POST NEW PROD FILE TO DDB
                 
                 // const updateParams = {
@@ -139,6 +143,7 @@ module.exports.run = (event, context, callback) => {
                 //     };
                 //     callback(null, response);
                 //   });
-        })
-    })           
-};
+        }
+//         )
+//     })           
+// };
