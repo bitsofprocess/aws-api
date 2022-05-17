@@ -51,6 +51,7 @@ module.exports.run = (event, context, callback) => {
         };
         // callback(null, response);
         const sourceItem = result.Item;
+        console.log(sourceItem)
 
         dynamoDb.get(destParams, (error, result) => {
             // handle potential errors
@@ -94,7 +95,7 @@ module.exports.run = (event, context, callback) => {
                   }
 
 
-                console.log(newItem)
+                // console.log(newItem)
                 
                   // console.log to keep record
                 // console.log(destItem);

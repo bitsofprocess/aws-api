@@ -30,6 +30,7 @@ const getddb = (sourceParams, destParams) => {
         // callback(null, response);
 
         sourceItem = result.Item;
+        console.log(sourceItem)
     });
 
     dynamoDb.get(destParams, (error, result) => {
@@ -52,10 +53,13 @@ const getddb = (sourceParams, destParams) => {
             // callback(null, response);
     
             destItem = result.Item;
+            console.log(destItem)
         });
-    
-    console.log(sourceItem);
-    console.log(destItem);
+
+    let newItem = {
+        ...sourceItem
+    }
+
     updateddb(sourceItem, destItem);
 }
 
