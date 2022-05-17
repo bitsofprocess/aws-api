@@ -33,7 +33,7 @@ module.exports.run = (event, context, callback) => {
     // getddb(sourceParams, destParams);
 
     dynamoDb.get(sourceParams, (error, result) => {
-    // handle potential errors
+  
         if (error) {
         console.error(error);
         callback(null, {
@@ -44,12 +44,11 @@ module.exports.run = (event, context, callback) => {
         return;
         }
 
-        // create a response
         const response = {
         statusCode: 200,
         body: JSON.stringify(result.Item),
         };
-        // callback(null, response);
+        callback(null, response);
         const sourceItem = result.Item;
 
         dynamoDb.get(destParams, (error, result) => {
@@ -69,7 +68,7 @@ module.exports.run = (event, context, callback) => {
                 statusCode: 200,
                 body: JSON.stringify(result.Item),
                 };
-                // callback(null, response);
+                callback(null, response);
                 const destItem = result.Item;
 
                 // console.log(sourceItem);
