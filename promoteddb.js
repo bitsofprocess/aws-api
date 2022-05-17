@@ -29,8 +29,7 @@ module.exports.run = (event, context, callback) => {
     }
       };
     
-    
-    // getddb(sourceParams, destParams);
+    // GET SOURCE AND PROD FILES
 
     dynamoDb.get(sourceParams, (error, result) => {
   
@@ -52,7 +51,6 @@ module.exports.run = (event, context, callback) => {
         const sourceItem = result.Item;
 
         dynamoDb.get(destParams, (error, result) => {
-            // handle potential errors
                 if (error) {
                 console.error(error);
                 callback(null, {
@@ -63,7 +61,6 @@ module.exports.run = (event, context, callback) => {
                 return;
                 }
         
-                // create a response
                 const response = {
                 statusCode: 200,
                 body: JSON.stringify(result.Item),
@@ -71,18 +68,11 @@ module.exports.run = (event, context, callback) => {
                 callback(null, response);
                 const destItem = result.Item;
 
-                // console.log(sourceItem);
-                // console.log(destItem);
-                
-
-                // updateddb function to be added here 
-                
+                // CREATE NEW PROD FILE
 
                 let newItem = {
                     ...sourceItem
                 }
-
-                // console.log(newItem)
 
                 for (let [key, value] of Object.entries(newItem)) {
                     for (let i = 0; i < excludeKeys.length; i++) {
@@ -95,48 +85,60 @@ module.exports.run = (event, context, callback) => {
 
                 console.log(newItem)
                 
-                  // console.log to keep record
-                // console.log(destItem);
-                
-                //add logic to replace excludeKeys (iterate through excludeKeys array and overwrite sourceItem keys)
-            })
+                // DELETE OLD FILE
+                const deleteOldProd = (event, context, callback) => {
+                    const params = {
+                      TableName: process.env.DYNAMODB_TABLE,
+                      Key: {
+                        id: event.pathParameters.destStage,
+                      },
+                    };
+                  
+                    dynamoDb.delete(params, (error) => {
+                      if (error) {
+                        console.error(error);
+                        callback(null, {
+                          statusCode: error.statusCode || 501,
+                          headers: { 'Content-Type': 'text/plain' },
+                          body: 'Couldn\'t remove the todo item.',
+                        });
+                        return;
+                      }
+                  
+                      const response = {
+                        statusCode: 200,
+                        body: JSON.stringify({}),
+                      };
+                      callback(null, response);
+                    });
+                }
 
-            // delete destItem
-            // create function
-    })
+                // POST NEW PROD FILE TO DDB
                 
-    //     dynamoDb.get(destparams, (error, result) => {
-    //         // handle potential errors
-    //         if (error) {
-    //         console.error(error);
-    //         callback(null, {
-    //             statusCode: error.statusCode || 501,
-    //             headers: { 'Content-Type': 'text/plain' },
-    //             body: 'Couldn\'t fetch the item.',
-    //         });
-    //         return;
-    //         }
+                // const updateParams = {
+                //     TableName: process.env.DYNAMODB_TABLE,
+                //     Key: {
+                //         parameter_set: item
+                //     }
+                //   };
 
-    //         // create a response
-    //         const response = {
-    //         statusCode: 200,
-    //         body: JSON.stringify(result.Item.app),
-    //         };
-    //         // callback(null, response);
-    //         const destItem = result.Item;
-    //         const bothItems ={
-    //             sourceItem: sourceItem,
-    //             destItem: destItem
-    //         };
-    //         const res = {
-    //             statusCode: 200,
-    //             body: JSON.stringify(bothItems)
-    //         }
-    //         callback(null, res);
-    //         var newItem = sourceItem;
-    //         newItem.game_api_key = destItem.game_api_key;
-    //         // newItem.min_version = destItem.min_version;
-    //     });
-    //         return newItem;
-    // });
-    };
+                // dynamoDb.update(params, (error, result) => {
+                //     if (error) {
+                //       console.error(error);
+                //       callback(null, {
+                //         statusCode: error.statusCode || 501,
+                //         headers: { 'Content-Type': 'text/plain' },
+                //         body: 'Couldn\'t fetch the item.',
+                //       });
+                //       return;
+                //     }
+                
+                //     const response = {
+                //       statusCode: 200,
+                //       body: JSON.stringify(result.Item),
+                //     };
+                //     callback(null, response);
+                //   });
+        })
+    })           
+};
