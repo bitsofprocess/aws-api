@@ -69,6 +69,9 @@ module.exports.run = (event, context, callback) => {
                 callback(null, response);
                 const destItem = result.Item;
 
+                // CREATE RECORD OF PROD FILE IN CONSOLE
+                console.log(destItem)
+
                 // CREATE NEW PROD FILE
 
                 let newItem = {
@@ -131,10 +134,7 @@ module.exports.run = (event, context, callback) => {
                         ...newItem
                       },
                   };
-
-                  console.log(newProdParams)
                 
-                  // write the todo to the database
                   dynamoDb.put(newProdParams, (error) => {
                     // handle potential errors
                     if (error) {
