@@ -85,9 +85,6 @@ module.exports.run = (event, context, callback) => {
                         }
                     } 
                   }
-
-
-                console.log(newItem)
                 
             // DELETE OLD FILE
         
