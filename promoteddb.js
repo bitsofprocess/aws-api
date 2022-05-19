@@ -90,59 +90,67 @@ module.exports.run = (event, context, callback) => {
         
         // const deleteOldProd = () => {
 
-            const params = {
-                TableName: `params-${destStage}`,
-                Key: {
-                parameter_set: item
-                },
-            };
+            // const params = {
+            //     TableName: `params-${destStage}`,
+            //     Key: {
+            //     parameter_set: item
+            //     },
+            // };
             
-                dynamoDb.delete(params, (error) => {
-                    if (error) {
-                    console.error(error);
-                    callback(null, {
-                        statusCode: error.statusCode || 501,
-                        headers: { 'Content-Type': 'text/plain' },
-                        body: 'Couldn\'t delete item.',
-                    });
-                    return;
-                    }
+            //     dynamoDb.delete(params, (error) => {
+            //         if (error) {
+            //         console.error(error);
+            //         callback(null, {
+            //             statusCode: error.statusCode || 501,
+            //             headers: { 'Content-Type': 'text/plain' },
+            //             body: 'Couldn\'t delete item.',
+            //         });
+            //         return;
+            //         }
                 
-                    const response = {
-                    statusCode: 200,
-                    body: JSON.stringify({}),
-                    };
-                    callback(null, response);
-                    console.log(response);
-                });
+            //         const response = {
+            //         statusCode: 200,
+            //         body: JSON.stringify({}),
+            //         };
+            //         callback(null, response);
+            //         console.log(response);
+            //     });
         // }
         
                 // POST NEW PROD FILE TO DDB
+                // const params = {
+            //     TableName: `params-${destStage}`,
+            //     Key: {
+            //     parameter_set: item
+            //     },
+            // };
+                const newProdParams = {
+                    TableName: `params-${destStage}`,
+                    Item: {
+                        parameter_set: item,
+                      },
+                  };
                 
-                // const updateParams = {
-                //     TableName: process.env.DYNAMODB_TABLE,
-                //     Key: {
-                //         parameter_set: item
-                //     }
-                //   };
-
-                // dynamoDb.update(params, (error, result) => {
-                //     if (error) {
-                //       console.error(error);
-                //       callback(null, {
-                //         statusCode: error.statusCode || 501,
-                //         headers: { 'Content-Type': 'text/plain' },
-                //         body: 'Couldn\'t fetch the item.',
-                //       });
-                //       return;
-                //     }
+                  // write the todo to the database
+                  dynamoDb.put(newProdParams, (error) => {
+                    // handle potential errors
+                    if (error) {
+                      console.error(error);
+                      callback(null, {
+                        statusCode: error.statusCode || 501,
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: 'Couldn\'t create new prod table.',
+                      });
+                      return;
+                    }
                 
-                //     const response = {
-                //       statusCode: 200,
-                //       body: JSON.stringify(result.Item),
-                //     };
-                //     callback(null, response);
-                //   });
+                    // create a response
+                    const response = {
+                      statusCode: 200,
+                      body: JSON.stringify(newProdParams.Item),
+                    };
+                    callback(null, response);
+                  });
         }
 //         )
 //     })           
