@@ -1,66 +1,96 @@
-'use strict';
+"use strict";
 
-const AWS = require('aws-sdk'); // eslint-disable-line import/no-extraneous-dependencies
-const updateddb = require('./updateddb');
+const AWS = require("aws-sdk"); // eslint-disable-line import/no-extraneous-dependencies
+const { createNewProd } = require("./createNewProd");
+const updateddb = require("./postNewProd");
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
+// module.exports.getddb = async (params) => {
+//     try {
+//       const dataCallback = (error, result) => {
 
-const getddb = (sourceParams, destParams) => {
-    let sourceItem 
-    let destItem 
+//         // if (error) {
+//         // console.error('get error', error);
+//         // reject(error);
+//         // }
 
-    dynamoDb.get(sourceParams, (error, result) => {
-    // handle potential errors
+//         const ddbItem = result.Item;
+//         return ddbItem;
+//     }
+//       dynamoDb.get(params, (error, result) => {
+
+//           // if (error) {
+//           // console.error('get error', error);
+//           // reject(error);
+//           // }
+
+//           const ddbItem = result.Item;
+//           return ddbItem;
+//       });
+//     } catch (error) {
+//         console.log("Error Message: ", error)
+//     }
+//   }
+
+  module.exports.getddb = (params) =>
+    new Promise((resolve, reject) => {
+      dynamoDb.get(params, (error, result) => {
         if (error) {
-        console.error(error);
-        callback(null, {
-            statusCode: error.statusCode || 501,
-            headers: { 'Content-Type': 'text/plain' },
-            body: 'Couldn\'t fetch the sourceParams.',
-        });
-        return;
+          console.error("get error", error);
+          reject(error);
         }
 
-        // create a response
-        const response = {
-        statusCode: 200,
-        body: JSON.stringify(result.Item.app),
-        };
-        // callback(null, response);
-
-        sourceItem = result.Item;
-        console.log(sourceItem)
+        const ddbItem = result.Item;
+        resolve(ddbItem);
+      });
     });
 
-    dynamoDb.get(destParams, (error, result) => {
-        // handle potential errors
-            if (error) {
-            console.error(error);
-            callback(null, {
-                statusCode: error.statusCode || 501,
-                headers: { 'Content-Type': 'text/plain' },
-                body: 'Couldn\'t fetch the sourceParams.',
-            });
-            return;
-            }
-    
-            // create a response
-            const response = {
-            statusCode: 200,
-            body: JSON.stringify(result.Item.app),
-            };
-            // callback(null, response);
-    
-            destItem = result.Item;
-            console.log(destItem)
-        });
 
-    let newItem = {
-        ...sourceItem
-    }
+// module.exports = getddb;
+// let sourceItem = await dynamoDb.get(sourceParams, (error, result) => {
 
-    updateddb(sourceItem, destItem);
-}
+//     if (error) {
+//     console.error(error);
+//     callback(null, {
+//         statusCode: error.statusCode || 501,
+//         headers: { 'Content-Type': 'text/plain' },
+//         body: 'Couldn\'t fetch sourceParams.',
+//     });
+//     return;
+//     }
 
-module.exports = getddb;
+//     const response = {
+//     statusCode: 200,
+//     body: JSON.stringify(result.Item),
+//     };
+//     callback(null, response);
+//     sourceItem = result.Item;
+//     return sourceItem
+// }
+
+//     dynamoDb.get(destParams, (error, result) => {
+//             if (error) {
+//             console.error(error);
+//             callback(null, {
+//                 statusCode: error.statusCode || 501,
+//                 headers: { 'Content-Type': 'text/plain' },
+//                 body: 'Couldn\'t fetch destParams.',
+//             });
+//             return;
+//             }
+
+//             const response = {
+//             statusCode: 200,
+//             body: JSON.stringify(result.Item),
+//             };
+//             callback(null, response);
+//             var destItem = result.Item;
+
+// CREATE RECORD OF PROD FILE IN CONSOLE
+// console.log(destItem);
+
+// createNewProd(sourceItem, destItem);
+//         })
+
+// )}

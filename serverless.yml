@@ -1,7 +1,11 @@
+org: bitsofprocess
 v org: bitsofprocess
 app: aws-api
 service: aws-api
 frameworkVersion: '2 || 3'
+plugins:
+  - serverless-offline
+  - serverless-dynamodb-local
 
 provider:
   name: aws
@@ -29,6 +33,13 @@ functions:
     events:
       - httpApi:
           path: /promoteddb/{sourceStage}/{destStage}
+          method: get
+
+  refactored:
+    handler: refactored.run
+    events:
+      - httpApi:
+          path: /refactored/{sourceStage}/{destStage}
           method: get
 
   create:
