@@ -27,55 +27,65 @@ provider:
             - dynamodb:DeleteItem
           Resource: "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
 
+layers:
+  lodash:
+    path: layer
+    compatibleRuntimes:
+      - nodejs12.x
+
 functions:
   promoteddb:
     handler: promoteddb.run
+    layers:
+      - !Ref LodashLambdaLayer
     events:
       - httpApi:
           path: /promoteddb/{sourceStage}/{destStage}
           method: get
 
-  refactored:
-    handler: refactored.run
-    events:
-      - httpApi:
-          path: /refactored/{sourceStage}/{destStage}
-          method: get
+  # refactored:
+  #   handler: refactored.run
+  #   layers:
+  #     - !Ref LodashLambdaLayer
+  #   events:
+  #     - httpApi:
+  #         path: /refactored/{sourceStage}/{destStage}
+  #         method: get
 
-  create:
-    handler: todos/create.create
-    events:
-      - httpApi:
-          path: /todos
-          method: post
+  # create:
+  #   handler: todos/create.create
+  #   events:
+  #     - httpApi:
+  #         path: /todos
+  #         method: post
 
-  list:
-    handler: todos/list.list
-    events:
-      - httpApi:
-          path: /todos
-          method: get
+  # list:
+  #   handler: todos/list.list
+  #   events:
+  #     - httpApi:
+  #         path: /todos
+  #         method: get
 
-  get:
-    handler: todos/get.get
-    events:
-      - httpApi:
-          path: /todos/{id}
-          method: get
+  # get:
+  #   handler: todos/get.get
+  #   events:
+  #     - httpApi:
+  #         path: /todos/{id}
+  #         method: get
 
-  update:
-    handler: todos/update.update
-    events:
-      - httpApi:
-          path: /todos/{id}
-          method: put
+  # update:
+  #   handler: todos/update.update
+  #   events:
+  #     - httpApi:
+  #         path: /todos/{id}
+  #         method: put
 
-  delete:
-    handler: todos/delete.delete
-    events:
-      - httpApi:
-          path: /todos/{id}
-          method: delete
+  # delete:
+  #   handler: todos/delete.delete
+  #   events:
+  #     - httpApi:
+  #         path: /todos/{id}
+  #         method: delete
 
 resources:
   Resources:
