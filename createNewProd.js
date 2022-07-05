@@ -1,11 +1,5 @@
 "use strict";
 
-const AWS = require("aws-sdk"); // eslint-disable-line import/no-extraneous-dependencies
-const { deleteOldProd } = require("./deleteOldProd");
-const { postNewProd } = require("./postNewProd");
-
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
-
 module.exports.createNewProd = async (sourceItem, destItem, excludeKeys) => {
   let newItem = await {
     ...sourceItem,

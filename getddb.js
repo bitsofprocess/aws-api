@@ -1,11 +1,8 @@
 "use strict";
 
 const AWS = require("aws-sdk"); // eslint-disable-line import/no-extraneous-dependencies
-const { createNewProd } = require("./createNewProd");
-const updateddb = require("./postNewProd");
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-
 
   module.exports.getddb = (params) =>
     new Promise((resolve, reject) => {
