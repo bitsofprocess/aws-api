@@ -4,8 +4,9 @@ app: aws-api
 service: aws-api
 frameworkVersion: '2 || 3'
 plugins:
-  - serverless-offline
+  - serverless-webpack
   - serverless-dynamodb-local
+  - serverless-offline
 
 provider:
   name: aws
@@ -27,21 +28,21 @@ provider:
             - dynamodb:DeleteItem
           Resource: "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
 
-layers:
-  lodash:
-    path: layer
-    compatibleRuntimes:
-      - nodejs12.x
+# layers:
+#   lodash:
+#     path: layer
+#     compatibleRuntimes:
+#       - nodejs12.x
 
 functions:
-  promoteddb:
-    handler: promoteddb.run
-    layers:
-      - !Ref LodashLambdaLayer
-    events:
-      - httpApi:
-          path: /promoteddb/{sourceStage}/{destStage}
-          method: get
+#   promoteddb:
+#     handler: promoteddb.run
+#     layers:
+#       - !Ref LodashLambdaLayer
+#     events:
+#       - httpApi:
+#           path: /promoteddb/{sourceStage}/{destStage}
+#           method: get
 
   # refactored:
   #   handler: refactored.run
@@ -52,12 +53,12 @@ functions:
   #         path: /refactored/{sourceStage}/{destStage}
   #         method: get
 
-  # create:
-  #   handler: todos/create.create
-  #   events:
-  #     - httpApi:
-  #         path: /todos
-  #         method: post
+  testpost:
+    handler: test/testpost.run
+    events:
+      - httpApi:
+          path: /todos
+          method: post
 
   # list:
   #   handler: todos/list.list
@@ -89,9 +90,10 @@ functions:
 
 resources:
   Resources:
-    TodosDynamoDbTable:
+    ourLTProd:
       Type: 'AWS::DynamoDB::Table'
       Properties:
+        TableName: ourLT-prod
         AttributeDefinitions:
           -
             AttributeName: parameter_set
@@ -100,5 +102,5 @@ resources:
           -
             AttributeName: parameter_set
             KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
-        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        # BillingMode: PAY_PER_REQUEST
+        # TableName: ${self:provider.environment.DYNAMODB_TABLE}
